@@ -55,3 +55,21 @@ fun Element.matchFirstElementTags(elementTags: List<String>, n: Int): Elements {
     })
     return elements
 }
+
+fun Element.matchElementTags(elementTags: List<String>): Elements {
+    val elements = Elements()
+    this.filter(object : NodeFilter {
+        override fun tail(node: Node, depth: Int): NodeFilter.FilterResult {
+            return NodeFilter.FilterResult.CONTINUE
+        }
+
+        override fun head(node: Node, depth: Int): NodeFilter.FilterResult {
+            if (node is Element && elementTags.contains(node.tagName())) {
+                elements.add(node)
+            }
+            return NodeFilter.FilterResult.CONTINUE
+        }
+
+    })
+    return elements
+}

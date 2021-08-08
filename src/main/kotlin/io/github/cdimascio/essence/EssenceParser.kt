@@ -56,7 +56,8 @@ class EssenceParser(private val html: String, language: Language? = null) {
             links = links,
             canonicalLink = canonicalLink,
             keywords = keywords,
-            tags = tags
+            tags = tags,
+            topNode = topNode
         )
     }
 }

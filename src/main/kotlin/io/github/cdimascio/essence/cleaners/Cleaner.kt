@@ -113,7 +113,10 @@ class Cleaner(private val doc: Document) {
                         pReplacementElements.add(Element("p").html(rNode.html()))
                     }
                 }
-                element.parent().insertChildren(element.siblingIndex(), pReplacementElements)
+                element.parent()?.insertChildren(
+                    element.siblingIndex(),
+                    pReplacementElements
+                )
                 element.remove()
             }
         }
@@ -123,14 +126,14 @@ class Cleaner(private val doc: Document) {
         val children = div.childNodes()
         val nodesToReturn = mutableListOf<Element>()
         val nodesToRemove = mutableListOf<Node>()
-        val replacmentText = mutableListOf<String>() // TODO: could be string buffer
+        val replacementText = mutableListOf<String>() // TODO: could be string buffer
         val isGravityUsed = { e: Element -> e.attr(GRAVITY_USED_ALREADY) == "yes" }
         val setGravityUsed = { e: Element -> e.attr(GRAVITY_USED_ALREADY, "yes") }
         for (kid in children) {
-            if (kid is Element && kid.tagName() == "p" && replacmentText.isNotEmpty()) {
-                val html = replacmentText.joinToString("")
+            if (kid is Element && kid.tagName() == "p" && replacementText.isNotEmpty()) {
+                val html = replacementText.joinToString("")
                 nodesToReturn.add(Element("p").html(html))
-                replacmentText.clear()
+                replacementText.clear()
                 nodesToReturn.add(kid)
             } else if (kid is TextNode) {
                 val kidText = kid.text()
@@ -141,18 +144,18 @@ class Cleaner(private val doc: Document) {
                     var prevSibling = kid.previousSibling()
                     while (prevSibling is Element && prevSibling.tagName() == "a" && !isGravityUsed(prevSibling)) {
                         val outerHtml = " ${prevSibling.outerHtml()} "
-                        replacmentText.add(outerHtml)
+                        replacementText.add(outerHtml)
                         nodesToRemove.add(prevSibling)
                         setGravityUsed(prevSibling)
                         prevSibling = prevSibling.previousSibling()
                     }
 
-                    replacmentText.add(kidText)
+                    replacementText.add(kidText)
 
                     var nextSibling = kid.nextSibling()
                     while (nextSibling is Element && nextSibling.tagName() == "a" && !isGravityUsed(nextSibling)) {
                         val outerHtml = " ${nextSibling.outerHtml()} "
-                        replacmentText.add(outerHtml)
+                        replacementText.add(outerHtml)
                         nodesToRemove.add(nextSibling)
                         setGravityUsed(nextSibling)
                         nextSibling = nextSibling.nextSibling()
@@ -165,10 +168,10 @@ class Cleaner(private val doc: Document) {
             }
         }
 
-        if (replacmentText.isNotEmpty()) {
-            val html = replacmentText.joinToString("")
+        if (replacementText.isNotEmpty()) {
+            val html = replacementText.joinToString("")
             nodesToReturn.add(Element("p").html(html))
-            replacmentText.clear()
+            replacementText.clear()
         }
 
         for (node in nodesToRemove) {

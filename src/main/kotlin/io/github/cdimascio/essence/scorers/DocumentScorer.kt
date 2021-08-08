@@ -59,22 +59,24 @@ class DocumentScorer(private val stopWords: StopWords) : Scorer {
             // THis only goes up 2 levels per node?
             // Propagate the score upwards
             val parent = node.parent()
-            Scorer.updateScore(parent, upScore)
-            Scorer.updateNodeCount(parent, 1)
+            if (parent != null) {
+                Scorer.updateScore(parent, upScore)
+                Scorer.updateNodeCount(parent, 1)
 
-            if (!parentNodes.contains(parent)) {
-                parentNodes.add(parent)
-            }
-            val grandParent: Node? = parent.parent()
+                if (!parentNodes.contains(parent)) {
+                    parentNodes.add(parent)
+                }
+                val grandParent: Node? = parent.parent()
 
-            grandParent?.let {
-                Scorer.updateScore(it, upScore / 2.0)
-                Scorer.updateNodeCount(it, 1)
-                if (!parentNodes.contains(grandParent)) {
-                    if (grandParent is Element) {
-                        parentNodes.add(grandParent)
-                    } else {
-                        throw java.lang.IllegalStateException("Fix unfluffer code: Didn't think a parent could be anything but an element here")
+                grandParent?.let {
+                    Scorer.updateScore(it, upScore / 2.0)
+                    Scorer.updateNodeCount(it, 1)
+                    if (!parentNodes.contains(grandParent)) {
+                        if (grandParent is Element) {
+                            parentNodes.add(grandParent)
+                        } else {
+                            throw java.lang.IllegalStateException("Fix unfluffer code: Didn't think a parent could be anything but an element here")
+                        }
                     }
                 }
             }

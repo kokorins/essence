@@ -115,7 +115,7 @@ class EssenceSpec {
     }
 
     @Test
-    fun getsCleanedTextTechcrunch() {
+    fun getsCleanedTextTechCrunch() {
         checkFixture(site = "techcrunch1", fields = listOf("cleaned_text"))
     }
 
@@ -224,8 +224,6 @@ class EssenceSpec {
                     val newText = cleanTestingTest(data.text, origText)
                     assertNotEquals("text should not be null", "", newText)
 
-                    println(origText)
-                    println(newText)
                     assertTrue(data.text.length >= origText.length)
 
                     assertEquals(origText, newText)

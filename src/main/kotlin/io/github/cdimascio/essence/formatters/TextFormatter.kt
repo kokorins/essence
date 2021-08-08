@@ -11,14 +11,14 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
     override fun format(node: Element?) = node?.let {
         val bestRoot = drillDownToCruxElement(node)
         // TODO: Combine the following into a single pass
-        removeNegativescoresNodes(bestRoot)
+        removeNegativeScoresNodes(bestRoot)
         superSubScriptToText(bestRoot)
         linksToText(bestRoot)
         addNewlineToBr(bestRoot)
         replaceWithText(bestRoot)
-        removeFewwordsParagraphs(bestRoot)
+        removeFewWordsParagraphs(bestRoot)
         // TODO: find proper root
-        // look look at children. if one node, look at their children to see if there are many
+        // look at children. if one node, look at their children to see if there are many
         // if there are many use that node as th root
         convertToText(bestRoot)
     } ?: ""
@@ -27,13 +27,13 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
         if (node.ownText().isBlank() && node.childNodeSize() == 1) {
             val onlyChild = node.childNode(0)
             if (onlyChild is Element) {
-                drillDownToCruxElement(onlyChild)
+                return drillDownToCruxElement(onlyChild)
             }
         }
         return node
     }
 
-    private fun removeNegativescoresNodes(node: Element) {
+    private fun removeNegativeScoresNodes(node: Element) {
         val gravityElements = node.find("*[gravityScore]")
         gravityElements.forEach {
             val score = try {
@@ -83,7 +83,7 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
         }
     }
 
-    private fun removeFewwordsParagraphs(node: Element) {
+    private fun removeFewWordsParagraphs(node: Element) {
         val elements = node.find("*")
         for (e in elements) {
             val tag = e.tagName()
@@ -91,8 +91,8 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
             val numStopWords = stopWords.statistics(text).stopWords.size
             val hasObject = e.find("object").isNotEmpty()
             val hasEmbed = e.find("embed").isNotEmpty()
-            val isEndline = tag == "br" || text == "\\r"
-            if (!isEndline && numStopWords < 3 && !hasObject && !hasEmbed) {
+            val isEndLine = tag == "br" || text == "\\r"
+            if (!isEndLine && numStopWords < 3 && !hasObject && !hasEmbed) {
                 if (e.parent() != null)
                     e.remove()
             } else {
@@ -108,7 +108,7 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
     }
 
     private fun convertToText(node: Node): String {
-        // To hold any text fragments that end up in text nodes outside of
+        // To hold any text fragments that end up in text nodes outside
         // html elements
         val texts = mutableListOf<String>()
         val hangingText = StringBuffer()
@@ -136,8 +136,8 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
                 texts.addAll(text.split("""\r?\n""".toRegex()))
 
                 if (hangingText.isNotBlank()) {
-                    val text = cleanParagraphText(hangingText.toString())
-                    texts.addAll(text.split("""\r?\n""".toRegex()))
+                    val cleanedText = cleanParagraphText(hangingText.toString())
+                    texts.addAll(cleanedText.split("""\r?\n""".toRegex()))
                 }
             }
         }
@@ -147,7 +147,7 @@ class TextFormatter(private val stopWords: StopWords) : Formatter {
         // regex that matches ranges of unicode characters used in words.
         // TODO
         // apply filter on texts.filter { /*  ensure at least one character  is present */}
-        return texts.map { it.trim() }.joinToString("\n\n")
+        return texts.joinToString("\n\n") { it.trim() }
     }
 
     private fun ulToText(node: Element): String {

@@ -1,6 +1,7 @@
 package io.github.cdimascio.essence.extractors
 
 import org.jsoup.nodes.Document
+import java.util.*
 
 internal object LanguageExtractor {
     fun extract(doc: Document): String {
@@ -12,8 +13,8 @@ internal object LanguageExtractor {
             """.trimIndent())?.attr("content") ?: ""
         }
         if (lang.isNotBlank() && lang.length >= 2) {
-            // return the first 2 letter ISO lang code with no country
-            return lang.cleanse().substring(0, 2).toLowerCase()
+            // return the first 2 letters ISO lang code with no country
+            return lang.cleanse().substring(0, 2).lowercase(Locale.getDefault())
         }
         return ""
     }

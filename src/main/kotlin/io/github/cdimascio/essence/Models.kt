@@ -1,5 +1,7 @@
 package io.github.cdimascio.essence
 
+import org.jsoup.nodes.Element
+
 data class EssenceResult(
     val text: String,
     val language: String,
@@ -15,8 +17,8 @@ data class EssenceResult(
     val links: List<Link>,
     val canonicalLink: String,
     val keywords: String,
-    val tags: List<String>
-
+    val tags: List<String>,
+    val topNode: Element?
 )
 
 data class Link(
