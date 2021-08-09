@@ -15,7 +15,7 @@ public class EssenceJavaSpec {
     public void parse() {
         String html = readFileFull("./fixtures/test_mcsweeney.html");
         JsonNode orig = parseJson(readFileFull("./fixtures/test_mcsweeney.json"));
-        EssenceResult data = Essence.extract(html);
+        EssenceResult data = Essence.extract(html, null);
 
         JsonNode expected = orig.get("expected");
 
